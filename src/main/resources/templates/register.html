@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolution Store | Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&family=Plus+Jakarta+Sans:wght@200;400;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-cream: #f9f6f2;
+            --mint-accent: #a8dadc;
+            --terracotta: #e76f51;
+            --deep-onyx: #1a1a1a;
+            --pure-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--deep-onyx);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: row-reverse; /* Form left, Visual right for variety */
+            align-items: stretch;
+        }
+
+        /* Visual Side: Matching Login's Terracotta vibe */
+        .side-visual {
+            flex: 1.2;
+            background: var(--terracotta);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .side-visual h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 7vw;
+            color: var(--pure-white);
+            line-height: 0.85;
+            font-style: italic;
+            z-index: 2;
+            letter-spacing: -3px;
+        }
+
+        /* Mint circle overlay - matching login brand language */
+        .side-visual::after {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: var(--mint-accent);
+            border-radius: 50%;
+            mix-blend-mode: multiply;
+            opacity: 0.4;
+        }
+
+        /* Form Side */
+        .side-form {
+            width: 40%;
+            background: var(--pure-white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 8%;
+            position: relative;
+        }
+
+        .form-header {
+            margin-bottom: 50px;
+        }
+
+        .form-header h2 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            margin-bottom: 30px;
+        }
+
+        .input-wrapper label {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            color: var(--deep-onyx);
+            letter-spacing: 1px;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 0;
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper input:focus {
+            border-bottom: 2px solid var(--terracotta);
+            padding-left: 5px;
+        }
+
+        /* Button: High-Contrast Onyx to match Login */
+        .btn-submit {
+            width: 100%;
+            background: var(--deep-onyx);
+            color: var(--pure-white);
+            padding: 22px;
+            border: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .btn-submit:hover {
+            background: var(--terracotta);
+            letter-spacing: 4px;
+        }
+
+        .login-link {
+            margin-top: 40px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            color: var(--deep-onyx);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid var(--deep-onyx);
+            padding: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .login-link:hover {
+            background: var(--bg-cream);
+            border-color: transparent;
+        }
+
+        /* Alert Styling */
+        .alert {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 18px;
+            margin-bottom: 30px;
+            border-left: 3px solid var(--terracotta);
+            background: #fffafa;
+            color: var(--terracotta);
+        }
+
+        .brand-footer {
+            position: absolute;
+            bottom: 40px;
+            left: 8%;
+            font-size: 0.6rem;
+            font-weight: 800;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 1100px) {
+            body { flex-direction: column; }
+            .side-visual { display: none; }
+            .side-form { width: 100%; padding: 60px 10%; }
+        }
+    </style>
+</head>
+<body>
+
+<section class="side-visual">
+    <h1>Join<br>The Global<br>Community.</h1>
+</section>
+
+<section class="side-form">
+    <div class="form-header">
+        <h2>SIGN UP</h2>
+        <p>New Client Registration</p>
+    </div>
+
+    <div th:if="${error}" class="alert">
+        <span th:text="${error}">Please check your registration details.</span>
+    </div>
+
+    <form th:action="@{/register}" method="post">
+        <div class="input-wrapper">
+            <label>Desired Username</label>
+            <input type="text" id="username" name="username" placeholder="Pick a username" required>
+        </div>
+
+        <div class="input-wrapper">
+            <label>Security Password</label>
+            <input type="password" id="password" name="password" placeholder="Create a password" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Create Account</button>
+    </form>
+
+    <a th:href="@{/login}" class="login-link">Member? Sign in here</a>
+
+    <div class="brand-footer">REV. STORE © 2026 INTERNATIONAL</div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolution Store | Sales Directory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #f9f6f2;
+            --terracotta: #e76f51;
+            --deep-onyx: #1a1a1a;
+            --pure-white: #ffffff;
+            --border: rgba(26, 26, 26, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--deep-onyx);
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* BOTÓN REGRESAR */
+        .back-nav {
+            margin-bottom: 30px;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: #888;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            color: var(--terracotta);
+            transform: translateX(-5px);
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 50px;
+        }
+
+        .title-group p {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--terracotta);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .title-group h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            font-style: italic;
+            line-height: 1;
+        }
+
+        .btn-new {
+            background-color: var(--deep-onyx);
+            color: var(--pure-white);
+            padding: 14px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .btn-new:hover {
+            background-color: var(--terracotta);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(231, 111, 81, 0.2);
+        }
+
+        .table-wrapper {
+            background: var(--pure-white);
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.02);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 20px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 20px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(26, 26, 26, 0.03);
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        .sale-id { font-weight: 700; color: #bbb; }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-link {
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .edit { color: var(--deep-onyx); }
+        .edit:hover { color: var(--terracotta); }
+
+        .delete { color: #eb4d4b; }
+        .delete:hover { color: #ff0000; }
+
+        .no-data {
+            text-align: center;
+            padding: 60px;
+            font-style: italic;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- NAVEGACIÓN DE RETORNO -->
+    <nav class="back-nav">
+        <a th:href="@{/home}" class="btn-back">← Back to Hub</a>
+    </nav>
+
+    <div class="header-section">
+        <div class="title-group">
+            <p>Transaction Ledger</p>
+            <h1>Sales.</h1>
+        </div>
+        <a th:href="@{/sales/new}" class="btn-new">+ Record Sale</a>
+    </div>
+
+    <div class="table-wrapper">
+        <table th:if="${not #lists.isEmpty(sales)}">
+            <thead>
+            <tr>
+                <th>Code</th>
+                <th>Date</th>
+                <th>Total Price</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${sales}">
+                <td class="sale-id" th:text="${s.codeSales}">001</td>
+                <td th:text="${s.saleDate}">2026-05-04</td>
+                <td th:text="${'Q ' + s.totalSales}">Q 0.00</td>
+                <td class="actions">
+                    <a th:href="@{/sales/edit/{id}(id=${s.codeSales})}" class="action-link edit">Modify</a>
+                    <a th:href="@{/sales/delete/{id}(id=${s.codeSales})}"
+                       class="action-link delete"
+                       onclick="return confirm('Archive this transaction permanently?')">Remove</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="no-data" th:if="${#lists.isEmpty(sales)}">
+            The ledger is currently empty.
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

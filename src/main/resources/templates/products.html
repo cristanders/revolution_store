@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolution Store | Inventory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&family=Plus+Jakarta+Sans:wght@200;400;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #f9f6f2;
+            --mint-wash: #a8dadc;
+            --terracotta: #e76f51;
+            --deep-onyx: #1a1a1a;
+            --pure-white: #ffffff;
+            --border: rgba(26, 26, 26, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--deep-onyx);
+            min-height: 100vh;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* REUTILIZANDO EL DOCK DEL HOME */
+        .nav-dock {
+            width: 80px;
+            background: var(--deep-onyx);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 0;
+            gap: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            height: calc(100vh - 40px);
+            position: sticky;
+            top: 20px;
+        }
+
+        .dock-item {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            color: var(--pure-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .dock-item:hover, .dock-item.active {
+            background: var(--terracotta);
+            transform: scale(1.1);
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-container {
+            flex-grow: 1;
+            background: var(--pure-white);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+
+        .header-section {
+            padding: 40px;
+            background: linear-gradient(to right, var(--pure-white), var(--bg-cream));
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-text h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-style: italic;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--deep-onyx);
+        }
+
+        .header-tag {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--terracotta);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        /* BOTONES */
+        .btn-action {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--deep-onyx);
+            color: var(--pure-white);
+        }
+
+        .btn-primary:hover {
+            background: var(--terracotta);
+            transform: translateY(-2px);
+        }
+
+        /* TABLA ESTILO MINIMALISTA */
+        .table-wrapper {
+            padding: 40px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            border-bottom: 2px solid var(--bg-cream);
+        }
+
+        td {
+            padding: 20px 15px;
+            border-bottom: 1px solid var(--bg-cream);
+        }
+
+        .product-name {
+            font-weight: 700;
+            color: var(--deep-onyx);
+        }
+
+        .product-code {
+            font-size: 0.75rem;
+            color: #888;
+            background: var(--bg-cream);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .price-tag {
+            font-weight: 800;
+            color: var(--terracotta);
+        }
+
+        .stock-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .stock-low { background: #ffebee; color: #ef4444; }
+        .stock-normal { background: var(--mint-wash); color: #2d6a4f; }
+
+        .btn-table {
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .btn-edit { color: var(--deep-onyx); background: var(--bg-cream); }
+        .btn-edit:hover { background: #e2e2e2; }
+
+        .btn-delete { color: #ef4444; }
+        .btn-delete:hover { background: #ffebee; }
+
+        @media (max-width: 1000px) {
+            .nav-dock { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navegación lateral idéntica al Home -->
+<nav class="nav-dock">
+    <a th:href="@{/home}" class="dock-item">RS</a>
+    <div style="flex-grow: 1;"></div>
+    <a th:href="@{/products}" class="dock-item active" title="Inventory">📦</a>
+    <a th:href="@{/sales}" class="dock-item" title="Sales">💰</a>
+    <a th:href="@{/customers}" class="dock-item " title="Clients">👤</a>
+
+    <div style="flex-grow: 1;"></div>
+    <div class="dock-item">⚙️</div>
+</nav>
+
+<main class="main-container">
+    <header class="header-section">
+        <div class="header-text">
+            <p class="header-tag">Management</p>
+            <h2>Product Inventory.</h2>
+        </div>
+        <div class="header-actions">
+            <a th:href="@{/products/new}" class="btn-action btn-primary">
+                + New Product
+            </a>
+        </div>
+    </header>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th>Code</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${products}">
+                <td><span class="product-code" th:text="${'#' + p.codeProduct}">#0</span></td>
+                <td><span class="product-name" th:text="${p.productName}">Product Name</span></td>
+                <td><span class="price-tag" th:text="${'Q ' + #numbers.formatDecimal(p.priceProduct, 1, 2)}">Q 0.00</span></td>
+                <td>
+                        <span class="stock-badge"
+                              th:classappend="${p.stockProduct <= 5} ? 'stock-low' : 'stock-normal'"
+                              th:text="${p.stockProduct}">0</span>
+                </td>
+                <td>
+                        <span th:text="${p.statusProduct ? '● Active' : '○ Inactive'}"
+                              th:style="${p.statusProduct ? 'color: #2d6a4f; font-weight:700' : 'color: #888'}">
+                        </span>
+                </td>
+                <td style="text-align: right;">
+                    <a th:href="@{/products/edit/{id}(id=${p.codeProduct})}" class="btn-table btn-edit">Edit</a>
+                    <a th:href="@{/products/delete/{id}(id=${p.codeProduct})}"
+                       class="btn-table btn-delete"
+                       onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(products)}">
+                <td colspan="6" style="text-align: center; padding: 40px; color: #888;">
+                    The inventory is currently empty.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>

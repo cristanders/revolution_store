@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolution Store | Edit Customer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #f9f6f2;
+            --terracotta: #e76f51;
+            --deep-onyx: #1a1a1a;
+            --pure-white: #ffffff;
+            --border: rgba(26, 26, 26, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--deep-onyx);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .edit-card {
+            background: var(--pure-white);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header span {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--terracotta);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .campo { margin-bottom: 20px; }
+        .full { grid-column: span 2; }
+
+        label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: var(--bg-cream);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--terracotta); background: white; }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .footer-actions {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .btn-confirm { background: var(--deep-onyx); color: white; }
+        .btn-confirm:hover { background: var(--terracotta); transform: translateY(-2px); }
+
+        .btn-back { color: #888; font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+
+<div class="edit-card">
+    <div class="header">
+        <span>Identity Management</span>
+        <h2>Modify Profile.</h2>
+    </div>
+
+    <form th:action="@{/customers/save}" th:object="${customer}" method="post">
+
+        <!-- PK OCULTA: Vital para que Hibernate sepa qué registro actualizar -->
+        <input type="hidden" th:field="*{dpiCustomer}">
+
+        <div class="form-grid">
+            <div class="campo">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" th:field="*{firstName}" placeholder="Enter name">
+                <div class="error-msg" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+            </div>
+
+            <div class="campo">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" th:field="*{lastName}" placeholder="Enter last name">
+                <div class="error-msg" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+            </div>
+
+            <div class="campo full">
+                <label for="address">Current Address</label>
+                <input type="text" id="address" th:field="*{address}" placeholder="Residential address">
+                <div class="error-msg" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+            </div>
+
+            <div class="campo full">
+                <label for="statusCustomer">Account Status</label>
+                <select id="statusCustomer" th:field="*{statusCustomer}">
+                    <!-- CORRECCIÓN: Se agrega .name() para asegurar que se envíe la constante en MAYÚSCULAS -->
+                    <option th:each="status : ${T(com.cristianperez.revolutionstore.enums.StatusCustomerEnum).values()}"
+                            th:value="${status.name()}"
+                            th:text="${status}">
+                    </option>
+                </select>
+                <div class="error-msg" th:if="${#fields.hasErrors('statusCustomer')}" th:errors="*{statusCustomer}"></div>
+            </div>
+        </div>
+
+        <div class="footer-actions">
+            <button type="submit" class="btn btn-confirm">Update Member</button>
+            <a th:href="@{/customers}" class="btn btn-back">Return to Directory</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

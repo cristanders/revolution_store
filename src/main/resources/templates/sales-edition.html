@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolution Store | Edit Sale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #f9f6f2;
+            --terracotta: #e76f51;
+            --deep-onyx: #1a1a1a;
+            --pure-white: #ffffff;
+            --border: rgba(26, 26, 26, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--deep-onyx);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .edit-card {
+            background: var(--pure-white);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
+
+        .header { text-align: center; margin-bottom: 35px; }
+        .header span { font-size: 0.65rem; font-weight: 800; color: var(--terracotta); letter-spacing: 2px; text-transform: uppercase; }
+        .header h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-style: italic; margin-top: 5px; }
+
+        .campo { margin-bottom: 25px; }
+        label { display: block; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; color: #666; }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: var(--bg-cream);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--terracotta); background: white; }
+        .read-only-info { font-size: 0.8rem; color: #999; margin-bottom: 20px; font-weight: 600; }
+        .error-msg { color: #ef4444; font-size: 0.7rem; font-weight: 600; margin-top: 5px; }
+
+        .footer-actions { margin-top: 35px; display: flex; flex-direction: column; gap: 12px; }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: 0.3s; text-align: center; text-decoration: none; font-size: 0.85rem; }
+        .btn-update { background: var(--deep-onyx); color: white; }
+        .btn-update:hover { background: var(--terracotta); transform: translateY(-2px); }
+        .btn-back { color: #888; font-size: 0.75rem; text-align: center; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="edit-card">
+    <div class="header">
+        <span>Transaction Adjustment</span>
+        <h2>Modify Sale.</h2>
+    </div>
+
+    <form th:action="@{/sales/save}" th:object="${product}" method="post">
+
+
+        <input type="hidden" th:field="*{codeSales}">
+
+
+        <input type="hidden" th:field="*{customer}">
+        <input type="hidden" th:field="*{user}">
+        <input type="hidden" th:field="*{statusSales}">
+
+        <p class="read-only-info">
+            Editing Record ID: <span th:text="*{codeSales}">000</span>
+        </p>
+
+        <div class="campo">
+            <label for="saleDate">Sale Date</label>
+            <input type="date" id="saleDate" th:field="*{saleDate}">
+            <div class="error-msg" th:if="${#fields.hasErrors('saleDate')}" th:errors="*{saleDate}"></div>
+        </div>
+
+        <div class="campo">
+            <label for="totalSales">Revenue Amount (Q)</label>
+            <input type="number" step="0.01" id="totalSales" th:field="*{totalSales}" placeholder="0.00">
+            <div class="error-msg" th:if="${#fields.hasErrors('totalSales')}" th:errors="*{totalSales}"></div>
+        </div>
+
+        <div class="footer-actions">
+            <button type="submit" class="btn btn-update">Save Changes</button>
+            <a th:href="@{/sales}" class="btn btn-back">Cancel Edition</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

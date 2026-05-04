@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenda</title>
+    <style>
+        /* VARIABLES Y RESET */
+        :root {
+            --primary: #000000;
+            --secondary: #ffffff;
+            --accent: #ff3e00; /* Color vibrante para llamadas a la acción */
+            --soft-gray: #f4f4f4;
+            --font-main: 'Inter', system-ui, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--secondary);
+            color: var(--primary);
+            overflow-x: hidden;
+        }
+
+        /* NAVEGACIÓN CREATIVA */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            mix-blend-mode: difference; /* El logo cambia de color según el fondo */
+            color: white;
+        }
+
+        .logo {
+            font-weight: 900;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .menu-dots {
+            display: flex;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        /* HERO SECTION - EL CORAZÓN DEL HOME */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 0 5%;
+            text-align: center;
+        }
+
+        /* Texto de fondo gigante que se mueve levemente */
+        .bg-title {
+            position: absolute;
+            font-size: 22vw;
+            font-weight: 900;
+            color: var(--soft-gray);
+            z-index: -1;
+            line-height: 0.8;
+            user-select: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            letter-spacing: -10px;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(3rem, 10vw, 7rem);
+            line-height: 1;
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -3px;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            max-width: 500px;
+            margin: 0 auto 40px;
+            color: #666;
+        }
+
+        /* BOTÓN ORIGINAL */
+        .cta-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .btn-main {
+            display: inline-block;
+            padding: 20px 50px;
+            background-color: var(--primary);
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 100px;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-main:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-shadow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            border-radius: 100px;
+            z-index: 1;
+            filter: blur(15px);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .cta-container:hover .btn-shadow {
+            opacity: 0.6;
+        }
+
+        /* ELEMENTOS FLOTANTES (IMÁGENES DE PRODUCTO) */
+        .float-img {
+            position: absolute;
+            width: 250px;
+            height: 320px;
+            background: #e0e0e0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+            transition: all 0.6s ease;
+        }
+
+        /* Posiciones asimétricas originales */
+        .img-1 { top: 15%; left: 10%; transform: rotate(-10deg); }
+        .img-2 { bottom: 10%; right: 12%; transform: rotate(8deg); }
+
+        .float-img:hover {
+            transform: rotate(0deg) translateY(-20px) scale(1.05);
+            z-index: 10;
+        }
+
+        /* FOOTER SIMPLIFICADO DENTRO DEL HOME */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .line {
+            width: 1px;
+            height: 50px;
+            background: var(--primary);
+            animation: grow 2s infinite alternate;
+        }
+
+        @keyframes grow {
+            from { height: 20px; }
+            to { height: 60px; }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .float-img { display: none; }
+            .bg-title { font-size: 30vw; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">TiendaUNO</div>
+    <div class="menu-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
+</nav>
+
+<main class="hero">
+    <div class="bg-title">UNO</div>
+
+    <div class="float-img img-1">
+        <div style="padding: 20px; font-size: 0.8rem; font-weight: bold;">Dulces de guayaba</div>
+    </div>
+
+    <div class="hero-content">
+        <h1>Tienda<br><span style="color: var(--accent);">UNO.</span></h1>
+        <p>la mejor tienda anti robos</p>
+
+        <div class="cta-container">
+            <a href="#" class="btn-main">Entrar a la Tienda</a>
+            <div class="btn-shadow"></div>
+        </div>
+    </div>
+
+    <div class="float-img img-2">
+        <div style="padding: 20px; font-size: 0.8rem; font-weight: bold; position: absolute; bottom: 0; color: white; background: rgba(0,0,0,0.5); width: 100%;">
+           Dulces Chao
+        </div>
+    </div>
+
+    <div class="scroll-indicator">
+        <span>Scroll</span>
+        <div class="line"></div>
+    </div>
+</main>
+
+</body>
+</html>

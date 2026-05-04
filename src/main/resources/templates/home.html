@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolution Store | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&family=Plus+Jakarta+Sans:wght@200;400;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #f9f6f2;
+            --mint-wash: #a8dadc;
+            --terracotta: #e76f51;
+            --deep-onyx: #1a1a1a;
+            --pure-white: #ffffff;
+            --border: rgba(26, 26, 26, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--deep-onyx);
+            height: 100vh;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* LEFT NAVIGATION - Dock Style */
+        .nav-dock {
+            width: 80px;
+            background: var(--deep-onyx);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 0;
+            gap: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .dock-item {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            color: var(--pure-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 800;
+            font-size: 0.7rem;
+            text-decoration: none;
+        }
+
+        .dock-item:hover {
+            background: var(--terracotta);
+            transform: scale(1.1);
+        }
+
+        /* MAIN LAYOUT */
+        .main-hub {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+        }
+
+        /* SIDEBAR SELECTOR */
+        .feed-selector {
+            background: var(--pure-white);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-style: italic;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 50px;
+            color: var(--terracotta);
+        }
+
+        .topic-group { margin-bottom: 35px; }
+        .topic-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 15px;
+            display: block;
+            font-weight: 800;
+        }
+
+        .topic-btn {
+            padding: 14px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--deep-onyx);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .topic-btn:hover { background: var(--bg-cream); }
+        .topic-btn.active {
+            background: var(--terracotta);
+            color: var(--pure-white);
+        }
+
+        /* MAIN CONTENT AREA */
+        .content-engine {
+            background: var(--pure-white);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* GREETING HEADER */
+        .engine-header {
+            padding: 40px;
+            background: linear-gradient(to right, var(--pure-white), var(--bg-cream));
+            border-bottom: 1px solid var(--border);
+        }
+
+        .engine-header h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        #activity-flow {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            align-content: start;
+        }
+
+        .data-card {
+            background: var(--bg-cream);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid transparent;
+            transition: 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .data-card:hover {
+            border-color: var(--terracotta);
+            transform: translateY(-5px);
+        }
+
+        .card-val {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .card-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #888;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            border: 1px solid var(--deep-onyx);
+            color: var(--deep-onyx);
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: var(--deep-onyx);
+            color: var(--pure-white);
+        }
+
+        @media (max-width: 1000px) {
+            .nav-dock, .feed-selector { display: none; }
+            .main-hub { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav-dock">
+    <a th:href="@{/home}" class="dock-item" style="background: var(--terracotta)">RS</a>
+    <div style="flex-grow: 1;"></div>
+    <a th:href="@{/products}" class="dock-item" title="Inventory">📦</a>
+    <!-- SALES LINK AGREGADO -->
+    <a th:href="@{/sales}" class="dock-item" title="Sales">💰</a>
+    <a th:href="@{/customers}" class="dock-item" title="Clients">👤</a>
+    <div style="flex-grow: 1;"></div>
+    <div class="dock-item">⚙️</div>
+</nav>
+
+<div class="main-hub">
+    <aside class="feed-selector">
+        <div class="brand-text">The<br>Revolution<br>Store.</div>
+
+        <div class="topic-group">
+            <span class="topic-label">Management</span>
+            <a th:href="@{/home}" class="topic-btn active">Dashboard Overview</a>
+            <a th:href="@{/products}" class="topic-btn">Product Catalog</a>
+            <!-- SALES LINK AGREGADO -->
+            <a th:href="@{/sales}" class="topic-btn">Sales Transactions</a>
+            <a th:href="@{/customers}" class="topic-btn">Customer Directory</a>
+        </div>
+
+        <div class="topic-group">
+            <span class="topic-label">Reports</span>
+            <a href="#" class="topic-btn">Monthly Analytics</a>
+            <a href="#" class="topic-btn">Revenue Streams</a>
+        </div>
+
+        <div style="flex-grow: 1;"></div>
+        
+        <form id="logoutForm" th:action="@{/logout}" method="post" style="display: none;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        </form>
+
+        <a href="javascript:void(0)"
+           onclick="document.getElementById('logoutForm').submit();"
+           class="logout-btn">
+            Terminate Session
+        </a>
+    </aside>
+
+    <section class="content-engine">
+        <header class="engine-header">
+            <p style="font-size: 0.7rem; font-weight: 800; color: var(--terracotta); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">Welcome Back</p>
+            <h2>Administrative Hub.</h2>
+        </header>
+
+        <div id="activity-flow">
+
+            <a th:href="@{/sales}" class="data-card" style="background: var(--mint-wash);">
+                <span class="card-val">$12.5k</span>
+                <span class="card-label">Daily Revenue</span>
+            </a>
+
+            <div class="data-card">
+                <span class="card-val">124</span>
+                <span class="card-label">Active Orders</span>
+            </div>
+
+            <a th:href="@{/customers}" class="data-card">
+                <span class="card-val">12</span>
+                <span class="card-label">New Clients</span>
+            </a>
+            <a th:href="@{/products}" class="data-card">
+                <span class="card-val">450</span>
+                <span class="card-label">Items in Stock</span>
+            </a>
+        </div>
+    </section>
+</div>
+
+</body>
+</html>

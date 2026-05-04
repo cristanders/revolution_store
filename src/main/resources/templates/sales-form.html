@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolution Store | Record Sale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #f9f6f2;
+            --terracotta: #e76f51;
+            --deep-onyx: #1a1a1a;
+            --pure-white: #ffffff;
+            --border: rgba(26, 26, 26, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--deep-onyx);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .form-card {
+            background: var(--pure-white);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            width: 100%;
+            max-width: 650px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
+
+        .form-header { text-align: center; margin-bottom: 35px; }
+        .form-header p { font-size: 0.7rem; font-weight: 800; color: var(--terracotta); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+        .form-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-style: italic; font-weight: 700; }
+
+        .grid-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .campo { margin-bottom: 20px; }
+        .full-width { grid-column: span 2; }
+
+        label { display: block; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; color: #666; }
+
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: var(--bg-cream);
+            transition: 0.3s;
+            outline: none;
+        }
+
+        input:focus, select:focus { border-color: var(--terracotta); background: white; }
+        .error { color: #ef4444; font-size: 0.65rem; font-weight: 600; margin-top: 5px; }
+
+        .btn-group { margin-top: 30px; display: flex; flex-direction: column; gap: 12px; }
+        .btn { width: 100%; padding: 16px; border-radius: 12px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-size: 0.85rem; text-align: center; text-decoration: none; border: none; }
+        .btn-save { background: var(--deep-onyx); color: white; }
+        .btn-save:hover { background: var(--terracotta); transform: translateY(-2px); }
+        .btn-cancel { color: #888; font-size: 0.75rem; text-decoration: none; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <header class="form-header">
+        <p th:text="${product.codeSales != null ? 'Update Transaction' : 'New Transaction'}">New Transaction</p>
+        <h2 th:text="${product.codeSales != null ? 'Edit Sale.' : 'Record Sale.'}">Record Sale.</h2>
+    </header>
+
+    <!-- IMPORTANTE: th:object="${product}" para coincidir con el Controller -->
+    <form th:action="@{/sales/save}" th:object="${product}" method="post">
+
+        <!-- Campo oculto para el ID (Vital para edición) -->
+        <input type="hidden" th:field="*{codeSales}">
+
+        <div class="grid-campos">
+            <!-- Fecha -->
+            <div class="campo">
+                <label for="saleDate">Transaction Date</label>
+                <input type="date" id="saleDate" th:field="*{saleDate}">
+                <div class="error" th:if="${#fields.hasErrors('saleDate')}" th:errors="*{saleDate}"></div>
+            </div>
+
+            <!-- Estado -->
+            <div class="campo">
+                <label for="statusSales">Status</label>
+                <select id="statusSales" th:field="*{statusSales}">
+                    <option value="" selected>Select Status</option>
+                    <option th:each="status : ${T(com.cristianperez.revolutionstore.enums.StatusSalesEnum).values()}"
+                            th:value="${status}"
+                            th:text="${status}"></option>
+                </select>
+                <div class="error" th:if="${#fields.hasErrors('statusSales')}" th:errors="*{statusSales}"></div>
+            </div>
+
+            <!-- Cliente -->
+            <div class="campo">
+                <label for="customer">Customer</label>
+                <select id="customer" th:field="*{customer}">
+                    <option value="" selected>Select Customer</option>
+                    <option th:each="c : ${customers}"
+                            th:value="${c.dpiCustomer}"
+                            th:text="${c.firstName + ' ' + c.lastName}">
+                    </option>
+                </select>
+                <div class="error" th:if="${#fields.hasErrors('customer')}" th:errors="*{customer}"></div>
+            </div>
+
+            <!-- Usuario -->
+            <div class="campo">
+                <label for="user">Seller</label>
+                <select id="user" th:field="*{user}">
+                    <option value="" selected>Select User</option>
+                    <option th:each="u : ${users}"
+                            th:value="${u.codeUser}"
+                            th:text="${u.username}">
+                    </option>
+                </select>
+                <div class="error" th:if="${#fields.hasErrors('user')}" th:errors="*{user}"></div>
+            </div>
+
+            <!-- Total -->
+            <div class="campo full-width">
+                <label for="totalSales">Total Revenue (Q)</label>
+                <input type="number" step="0.01" id="totalSales" th:field="*{totalSales}" placeholder="0.00">
+                <div class="error" th:if="${#fields.hasErrors('totalSales')}" th:errors="*{totalSales}"></div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-save" th:text="${product.codeSales != null ? 'Update Sale' : 'Confirm Sale'}">Confirm Sale</button>
+            <a th:href="@{/sales}" class="btn btn-cancel">Discard & Return</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolution Store | Customers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&family=Plus+Jakarta+Sans:wght@200;400;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #f9f6f2;
+            --mint-wash: #a8dadc;
+            --terracotta: #e76f51;
+            --deep-onyx: #1a1a1a;
+            --pure-white: #ffffff;
+            --border: rgba(26, 26, 26, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--deep-onyx);
+            min-height: 100vh;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* DOCK NAVIGATION (Consistencia con Home y Products) */
+        .nav-dock {
+            width: 80px;
+            background: var(--deep-onyx);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 0;
+            gap: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            height: calc(100vh - 40px);
+            position: sticky;
+            top: 20px;
+        }
+
+        .dock-item {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            color: var(--pure-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .dock-item:hover, .dock-item.active {
+            background: var(--terracotta);
+            transform: scale(1.1);
+        }
+
+        /* MAIN CONTENT */
+        .main-container {
+            flex-grow: 1;
+            background: var(--pure-white);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+
+        .header-section {
+            padding: 40px;
+            background: linear-gradient(to right, var(--pure-white), var(--bg-cream));
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-text h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-style: italic;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .header-tag {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--terracotta);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .btn-new {
+            background: var(--deep-onyx);
+            color: var(--pure-white);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .btn-new:hover {
+            background: var(--terracotta);
+            transform: translateY(-2px);
+        }
+
+        /* TABLE STYLES */
+        .table-wrapper {
+            padding: 40px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            border-bottom: 2px solid var(--bg-cream);
+        }
+
+        td {
+            padding: 20px 15px;
+            border-bottom: 1px solid var(--bg-cream);
+            vertical-align: middle;
+        }
+
+        .customer-dpi {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #888;
+            background: var(--bg-cream);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .customer-name {
+            font-weight: 700;
+            color: var(--deep-onyx);
+            font-size: 1rem;
+        }
+
+        .customer-address {
+            font-size: 0.85rem;
+            color: #666;
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* BADGES PARA ENUMS */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .status-active { background: var(--mint-wash); color: #2d6a4f; }
+        .status-inactive { background: #fee2e2; color: #ef4444; }
+
+        .btn-action {
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: 0.2s;
+            margin-left: 5px;
+        }
+
+        .btn-edit { color: var(--deep-onyx); background: var(--bg-cream); }
+        .btn-edit:hover { background: #e2e2e2; }
+
+        .btn-delete { color: var(--error); }
+        .btn-delete:hover { background: #fee2e2; color: #ef4444; }
+
+        @media (max-width: 1000px) {
+            .nav-dock { display: none; }
+        }
+    </style>
+</head>
+<body>
+->
+<nav class="nav-dock">
+    <a th:href="@{/home}" class="dock-item">RS</a>
+    <div style="flex-grow: 1;"></div>
+    <a th:href="@{/products}" class="dock-item" title="Inventory">📦</a>
+    <a th:href="@{/sales}" class="dock-item" title="Sales">💰</a>
+    <a th:href="@{/customers}" class="dock-item active" title="Clients">👤</a>
+    <div style="flex-grow: 1;"></div>
+    <div class="dock-item">⚙️</div>
+</nav>
+
+<main class="main-container">
+    <header class="header-section">
+        <div class="header-text">
+            <p class="header-tag">CRM System</p>
+            <h2>Customer Base.</h2>
+        </div>
+        <div class="header-actions">
+            <a th:href="@{/customers/new}" class="btn-new">+ Add Customer</a>
+        </div>
+    </header>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th>DPI / ID</th>
+                <th>Full Name</th>
+                <th>Residence</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr th:each="c : ${customers}">
+                <td>
+                    <span class="customer-dpi" th:text="${c.dpiCustomer}">0000 00000 0000</span>
+                </td>
+                <td>
+                    <div class="customer-name" th:text="${c.firstName + ' ' + c.lastName}">John Doe</div>
+                </td>
+                <td>
+                    <div class="customer-address" th:text="${c.address}">Villa Nueva, Guatemala</div>
+                </td>
+                <td>
+
+                    <span class="status-badge"
+                          th:classappend="${c.statusCustomer.name() == 'ACTIVE'} ? 'status-active' : 'status-inactive'"
+                          th:text="${c.statusCustomer}">
+                            ACTIVE
+                        </span>
+                </td>
+                <td style="text-align: right;">
+                    <a th:href="@{/customers/edit/{id}(id=${c.dpiCustomer})}" class="btn-action btn-edit">Edit</a>
+                    <a th:href="@{/customers/delete/{id}(id=${c.dpiCustomer})}"
+                       class="btn-action btn-delete"
+                       onclick="return confirm('Archive this customer?')">Delete</a>
+                </td>
+            </tr>
+
+            <!-- Si no hay clientes -->
+            <tr th:if="${#lists.isEmpty(customers)}">
+                <td colspan="5" style="text-align: center; padding: 60px; color: #888;">
+                    No customers registered in the database.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>
